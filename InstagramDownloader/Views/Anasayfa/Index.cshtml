@@ -1,0 +1,223 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html >
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Instagram Profil Görüntüleyici, Video/Fotoğraf İndirme</title>
+    <link rel="icon" href="~/Content/img/icon.png">
+    <meta name="Description" content="Instagram Profil Görüntüleyici, Video/Fotoğraf İndirme">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=4.0, user-scalable=yes" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="Keywords" content="Instagram v01deo, Download video, Download Instagram video">
+
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/Content/css/instagram_custom.css">
+    <link href="~/Content/css/jquery-ui.css" rel="stylesheet" />
+    <link href="~/Content/css/style.css" rel="stylesheet" />
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="box box-default">
+            <div class="box-header with-border text-center">
+                <img src="~/Content/img/logooos.png" />
+            </div><br />
+            <div class="box-body">
+                <ul class="nav nav-tabs justify-content-center" role="tablist">
+                    <li class="nav-item"> <a class="nav-link active show" data-toggle="tab" href="#insta1" role="tab" aria-selected="true"><span class="hidden-sm-up"><i class="ion-home"></i></span> <span class="hidden-xs-down">Profil Görüntüleme</span></a> </li>
+                    <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#insta2" role="tab" aria-selected="false"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Video / Fotoğraf İndirme</span></a> </li>
+                </ul>
+                <div class="tab-content tabcontent-border">
+                    <div class="tab-pane active show" id="insta1" role="tabpanel">
+                        <div class="pad">
+                            <div class="row page-header">
+                                <div class="col-md-6 col-md-offset-3 card">
+                                    <div class="text-center">
+                                        <h1>Instagram Profil Görüntüleyici</h1>
+                                        <h2>Profilini Görüntülemek İstediğiniz Kişinin Instagram Kullanıcı Adını Giriniz</h2>
+                                        <div class="col-md-10 col-md-offset-1 inputform">
+                                            <div class="col-md-8">
+                                                <input type="text" id="kullaniciAdi" class="instinput" placeholder="Instagram Kullanıcı Adı Giriniz" />
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button id="goruntule" class="instabutton">Görüntüle</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                    <div class="grid-7" style="margin:0 auto" id="profilediv">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane pad" id="insta2" role="tabpanel">
+                        <div class="row page-header">
+                            <div class="col-md-6 col-md-offset-3 card" id="ana">
+                                <div class="text-center">
+                                    <h1>Instagram Fotoğraf/Video İndirici</h1>
+                                    <h2>İndirmek İstediğiniz Fotoğrafın yada Videonun Linkini Aşağıya Yapıştırınız</h2>
+                                    <div class="col-md-10 col-md-offset-1 inputform">
+                                        <div class="col-md-8">
+                                            <input type="text" id="picvid" class="instinput" placeholder="Fotoğraf/Video Linkini Yapıştırınız" />
+                                        </div>
+                                        <div class="col-md-4" id="burada">
+                                            <button id="indir" class="instabutton">İndir</button>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="videodiv">
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Content/js/jquery-1.12.4.js"></script>
+    <script src="~/Content/js/jquery-ui.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            $("#kullaniciAdi").autocomplete({
+                source: function (istek, sonuc) {
+                    $.ajax({
+                        url: "https://www.instagram.com/web/search/topsearch/?context=user&count=10&query=" + istek.term,
+                        success: function (data) {
+                            var obj = [];
+
+                            $.each(data.users, function (i, yeni) {
+                                if (obj.indexOf(yeni.user.full_name) === -1) {
+                                    obj.push({
+                                        id: yeni.user.pk,
+                                        label: yeni.user.full_name,
+                                        title: yeni.user.username
+                                    });
+                                }
+                            });
+                            sonuc(obj);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    event.preventDefault();
+                    $("#kullaniciAdi").val(ui.item.title);
+                }
+            });
+        });
+        $('#goruntule')['click'](function () {
+            var kullaniciadi = $('#kullaniciAdi').val();
+            var url = "https://www.instagram.com/" + kullaniciadi + "/?__a=1";
+
+            $.getJSON(url, function (veri) {
+                $('#profilediv').empty();
+                var biografi = veri.graphql.user.biography;
+                biografi = biografi.replace(/\r\n/g, '<br />').replace(/[\r\n]/g, '<br />');
+                
+                var takipettigi = veri.graphql.user.edge_follow.count;
+                var takipedenler = veri.graphql.user.edge_followed_by.count;
+                var gonderisayisi = veri.graphql.user.edge_owner_to_timeline_media.count;
+                var tamad = veri.graphql.user.full_name;
+                var kullaniciadi = veri.graphql.user.username;
+             
+                var profilresmi = veri.graphql.user.profile_pic_url;
+                var profilresmihd = veri.graphql.user.profile_pic_url_hd;
+                var txt = "Profili Gör";
+                var str = "";
+                str += '<div class="card text-center">' + '<img src="' + profilresmi + '" alt="profile-pic" class="profile" style="margin:0 auto">' + '<br />';
+                str += '<p class="font-weight-light">' + tamad + '  (' + kullaniciadi + ')' + '</p>' + '<p class="job-title">' + biografi + '</p>';
+                str += '<a rel="nofollow" href="' + profilresmihd + '&amp;dl=1' + '" class="downloadbutton btn">'+"Profil Fotoğrafını İndir"+ '</a>';
+                str += '<hr class="hr-2">' + '<div class="container-fluid">' + '<div style="display: inline-flex">';
+                str += '<div>' + '<button class="color-b circule">' + '<i class="fa fa-instagram fa-2x">' + '</i>' + '</button>' + '<h3 class="box-header">' + gonderisayisi + '</h3>' + '<p class="followers">' + "Gonderiler" + '</p>';
+                str += '</div>' + '&ensp;&ensp;' + '<div>' + '<button class="color-b circule">' + '<i class="fa fa-instagram fa-2x">' + '</i>' + '</button>' + '<h3>' + takipettigi + '</h3>' + '<p class="followers">' + "Takip Ettiği" + '</p>' + '</div>' +'&ensp;&ensp;';
+                str += '<div>' + '<button class="color-b circule">' + '<i class="fa fa-instagram fa-2x">' + '</i>' + '</button>' + '<h3>' + takipedenler + '</h3>' + '<p class="followers">' + "Takip Edenler" + '</p>' + '</div>' + '</div>' + '</div>' + '</div>';
+                $('#profilediv').append(str);
+              
+               
+              
+            })
+
+
+        });
+        $('#indir')['click'](function (e) {
+            var picvidlink = $('#picvid').val();
+            var yenilink = "";
+            var a = picvidlink;
+            var temp = new Array();
+            temp = a.split("?igshid=");
+            yenilink = temp[0];
+            var qs = yenilink + '?__a=1';
+
+            $.getJSON(qs, function (veri) {
+                $('#videodiv').empty();
+                console.log(veri.graphql.shortcode_media.owner.profile_pic_url);
+                var profilpictureurl = veri.graphql.shortcode_media.owner.profile_pic_url;
+                var fullname = veri.graphql.shortcode_media.owner.full_name;
+                var username = veri.graphql.shortcode_media.owner.username;
+                var gonderiurl = "";
+                var text = "";
+                var degisecekstr = "";
+
+                var gonderitipi = veri.graphql.shortcode_media.__typename;
+                if (gonderitipi == "GraphVideo") {
+
+                    gonderiurl = veri.graphql.shortcode_media.video_url;
+                    text = "Videoyu İndir";
+                    degisecekstr += '<video id="video" width="100%" autoplay="autoplay" loop="loop" muted="muted" controls="" __idm_id__="909815809">' + '<source src="' + gonderiurl + '" type="video/mp4">' + '</video>';
+
+
+                }
+                if (gonderitipi == "GraphImage") {
+
+                    gonderiurl = veri.graphql.shortcode_media.display_url;
+                    text = "Fotoğrafı İndir";
+                    degisecekstr += '<img src="' + gonderiurl + '" class="downloadimage" >';
+                }
+                if (gonderitipi == "GraphSidecar") {
+                    gonderiurl = veri.graphql.shortcode_media.display_url;
+                    text = "Fotoğrafı İndir";
+                    degisecekstr += '<img src="' + gonderiurl + '" class="downloadimage" >';
+                } var str = "";
+                str += '<div class="col-md-4 col-md-offset-4 resultdiv" style="display: block;margin-top:0px;">';
+                str += '<div class="profileheader">';
+                str += '<a href="/"><img class="profilepic img-circle" src="' + profilpictureurl + '">' + '</a>';
+                str += '<a href="#" class="profilename">' + fullname + '</a>' + '<br>';
+                str += '<a href="#" class="username">' + '<span id="username" class="text-muted">' + username + '</span>' + '</a>' + '</div>';
+                str += '<div id="data">';
+
+
+                str += degisecekstr;
+                str += '<a rel="nofollow" href="' + gonderiurl + '&amp;dl=1' + '" class="downloadbutton btn btn-group-justified">' + text + '</a>';
+
+
+                str += '</div>' + '</div>';
+                $('#videodiv').append(str);
+
+            })
+
+
+
+
+        });
+    </script>
+
+</body>
+</html>
+
+
