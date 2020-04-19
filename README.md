@@ -20,7 +20,4 @@ Eksikleri vardır ve Gelişime açıktır.
 2
 ![Proje](https://instagram.yakubkrh.com/Resim3.jpg) 
 
-3
-![Proje](https://instagram.yakubkrh.com/Resim2.jpg) 
-
 
