@@ -14,8 +14,12 @@ Projede iki farklı bölüm vardır.
 
 Eksikleri vardır ve Gelişime açıktır.
 
-
+1
 ![Proje](https://instagram.yakubkrh.com/Resim1.jpg) 
+
+2
 ![Proje](https://instagram.yakubkrh.com/Resim2.jpg) 
+
+3
 ![Proje](https://instagram.yakubkrh.com/Resim3.jpg) 
 
